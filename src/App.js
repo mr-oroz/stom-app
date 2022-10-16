@@ -6,7 +6,6 @@ import './App.css';
 import Cookies from 'js-cookie';
 import { authServices } from './http/auth-services';
 const App = () => {
-  
   const [username, setUsername] = useState('')
   const loadUser = async () => {
     const data = await authServices.getMe()
@@ -16,7 +15,9 @@ const App = () => {
     loadUser()
   }, [])
 
-  const logout = () => {
+  const logout = async () => {
+    const data = await authServices.logout()
+    console.log(data)
     Cookies.remove('stom-token')
     setUsername('')
   }
