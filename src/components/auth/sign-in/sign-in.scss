@@ -1,0 +1,44 @@
+.auth {
+  &__login, &__password {
+    input {
+      border-radius: 10px 10px 0 0;
+      border: none;
+      outline: none;
+      background-color: #FAFAFA;
+      padding-left: 14px;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      margin: 7.5px 0;
+      width: 300px;
+    }
+  }
+  &__btn, &__remember{
+    margin-top: 22px;
+  }
+  &__remember{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    span {
+      margin-left: 15px;
+    }
+  }
+  &__btn{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button{
+      background-color: #246BFD;
+      border: none;
+      outline: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      padding: 15px 71px;
+    }
+    button:active{
+      background-color: #3c79f3;
+    }
+  }
+}

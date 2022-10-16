@@ -1,53 +1,76 @@
 import React, { useState } from 'react';
+import './register.scss';
+import Logo from '../../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
-import './register.css'
-import { authServices } from '../../../http/auth-services';
-const SignIn = () => {
+import { useSelector, useDispatch } from 'react-redux';
+import { clearError, showLoading, showError, hideLoading } from '../../../redux/actions/global-action';
+import { registerServices } from '../../../redux/services/auth-services';
+
+const Register = () => {
+  const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
+  const { loading, error } = useSelector(state => state.globalReducer)
+  const dispatch = useDispatch()
+
+  console.log(loading)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    dispatch(showLoading())
+    dispatch(clearError)
     try {
-      const data = await authServices.register({email, username, password})
-      console.log(data)
-      setUsername('')
-      setPassword('')
+      await registerServices({email, username, password})
       setEmail('')
-    } catch(e) {
-      console.log(e)
+      setPassword('')
+      setUsername('')
+    } catch (e) {
+      dispatch(showError('ой что то не так!'))
+    } finally {
+      dispatch(hideLoading())
     }
   }
   return (
-    <div className='container__auth'>
-      <h1 className='title__register'>Register</h1>
-      <form className='form-control' onSubmit={handleSubmit} action="#">
-      <label htmlFor="">email</label>
-        <input
-          onChange={e => setEmail(e.target.value)}
-          value={email}
-          type="text"
-          placeholder='email' />
-        <label htmlFor="">name</label>
-        <input
-          onChange={e => setUsername(e.target.value)}
-          value={username}
-          type="text"
-          placeholder='name' />
-        <label htmlFor="">password</label>
-        <input
-          onChange={e => setPassword(e.target.value)}
-          value={password}
-          type="password"
-          placeholder='password' />
-        <button type='submit'>Войти</button>
-        <Link to='/auth/login'>login</Link>
-        <Link to='/'>Home</Link>
+    <div className='auth'>
+      <div className='logo'>
+        <img src={Logo} alt="" />
+        <h1>Здравствуйте</h1>
+      </div>
+      <form onSubmit={handleSubmit} className='form-control' action="">
+        <div className="auth__login">
+          <input 
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+            placeholder='Имя пользователя' 
+            type="text" />
+        </div>
+        <div className="auth__password">
+          <input 
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            placeholder='Пароль' 
+            type="password" />
+        </div>
+        <div className="auth__password">
+          <input
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            placeholder='Email'
+            type="text" />
+        </div>
+        <div className="auth__remember">
+          <input type="checkbox" />
+          <span>Запомнить меня</span>
+        </div>
+        <div className="auth__btn">
+          <button type='submit'>{loading ? 'Загрузка...' : 'Зарегистрироваться'}</button>
+        </div>
+        <div className='auth__route'>
+          <span>Нет ещё аккаунта?</span> <Link to='/auth/login'>Зарегистрируйтесь</Link>
+        </div>
       </form>
-
     </div>
   );
 };
 
-export default SignIn;
+export default Register;

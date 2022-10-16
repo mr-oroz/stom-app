@@ -1,49 +1,65 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { authServices } from '../../../http/auth-services';
-import Cookies from 'js-cookie';
-const SignIn = ({loadUser}) => {
+import './sign-in.scss';
+import Logo from '../../../assets/images/logo.png';
+import { Link } from 'react-router-dom';
+import { loginServices, getMeServices } from '../../../redux/services/auth-services';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearError, hideLoading, showLoading } from '../../../redux/actions/global-action';
+import {useNavigate} from 'react-router-dom';
+const SignIn = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const { loading, error } = useSelector(state => state.globalReducer)
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
+    dispatch(showLoading())
+    dispatch(clearError())
     try {
-    
-      const data = await authServices.signIn({username, password})
-      Cookies.set('stom-token', data.data.auth_token)
-      loadUser()
-      setUsername('')
+      getMeServices()
+      await loginServices({ username, password })
       setPassword('')
-      navigate('/')
-    } catch(e) {
+      setUsername('')
+    } catch (e) {
       console.log(e)
-      setLoading(false)
-    } finally{
-      setLoading(false)
+    } finally {
+      dispatch(hideLoading())
+      navigate('/')
     }
   }
   return (
-    <div className='container__auth'>
-      <h1>Login</h1>
-      <form className='form-control' onSubmit={handleSubmit} action="#">
-        <label htmlFor="">name</label>
-        <input
-          onChange={e => setUsername(e.target.value)}
-          value={username}
-          type="text"
-          placeholder='name' />
-        <label htmlFor="">password</label>
-        <input
-          onChange={e => setPassword(e.target.value)}
-          value={password}
-          type="password"
-          placeholder='password' />
-        <button type='submit'>{loading ? 'loading': 'sign in'}</button>
-        <Link to='/auth/register'>register</Link>
-        <Link to='/'>Home</Link>
+    <div className='auth'>
+      <div className='logo'>
+        <img src={Logo} alt="" />
+        <h1>Здравствуйте</h1>
+      </div>
+      <form onSubmit={handleSubmit} className='form-control' action="">
+        <div className="auth__login">
+          <input
+            onChange={e => setUsername(e.target.value)}
+            value={username}
+            placeholder='Имя пользователя'
+            type="text" />
+        </div>
+        <div className="auth__password">
+          <input
+            onChange={e => setPassword(e.target.value)}
+            value={password}
+            placeholder='Пароль'
+            type="password" />
+        </div>
+        <div className="auth__remember">
+          <input type="checkbox" />
+          <span>Запомнить меня</span>
+        </div>
+        <div className="auth__btn">
+          <button type='submit'>{loading ? 'Загрузка...' : 'Войти'}</button>
+        </div>
+        <div className='auth__route'>
+          <span>Уже есть аккаунт? </span> <Link to='/auth/register'>Войдите</Link>
+        </div>
       </form>
     </div>
   );

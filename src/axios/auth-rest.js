@@ -14,7 +14,7 @@ const logout = () => {
   return instance.get('/auth/token/logout')
 }
 
-export const authServices = {
+export const authRest = {
   getMe,
   register,
   signIn,
